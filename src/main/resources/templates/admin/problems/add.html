@@ -1,0 +1,304 @@
+<html layout:decorate="~{layouts/default}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title th:text="${editing != null} ? #{msg.problems.edit} : #{msg.problems.add}"></title>
+</head>
+
+<th:block layout:fragment="snippetCss">
+    <link rel="stylesheet" th:href="@{/css/simplemde/simplemde.min.css}"/>
+    <link rel="stylesheet" th:href="@{/plugins/codemirror-5.42.2/lib/codemirror.css}"/>
+</th:block>
+<div class="container content" layout:fragment="content">
+    <h1><span th:text="#{msg.problems.edit}"></span> <span th:text="#{msg.problems.task}"></span></h1>
+    <form th:object="${problem}" th:action="@{/admin/problems/add}" method="post" enctype="multipart/form-data"
+          id="form">
+        <!--/* --------------------------------------------- */-->
+        <!--/* ----------------- ERRORS -------------------- */-->
+        <div th:if="${#fields.hasErrors('*')}" class="alert alert-warning" role="alert">
+            <h4 class="alert-heading" th:text="#{form.has.errors}"></h4>
+            <hr/>
+            <p th:text="#{form.cant.complete}"></p>
+            <ul th:if="${#fields.hasErrors('*')}">
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+        </div>
+        <!--/* --------------------------------------------- */-->
+        <!--/* ----------------- TABLIST  ------------------ */-->
+        <ul class="nav nav-tabs" id="tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="task-tab" data-toggle="tab" href="#task" role="tab" aria-controls="task"
+                   aria-selected="true"
+                   th:text="#{msg.problems.task}"></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="solution-tab" data-toggle="tab" href="#solution" role="tab"
+                   aria-controls="solution" aria-selected="false"
+                   th:text="#{msg.problems.solution}"></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="test-tab" data-toggle="tab" href="#test" role="tab" aria-controls="test"
+                   aria-selected="false"
+                   th:text="#{msg.problems.tests}"></a>
+            </li>
+        </ul>
+        <!--/* --------------------------------------------- */-->
+        <!--/* --------------- TAB CONTENT ----------------- */-->
+        <div class="tab-content mt-3 mb-3" id="tabContent">
+            <!--/* --------------------------------------------- */-->
+            <!--/* -------------- BASIC INFO  ------------------ */-->
+            <div class="tab-pane fade show active" id="task" role="tabpanel" aria-labelledby="task-tab">
+                <h2 th:text="#{msg.problems.basicinfo}"></h2>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" th:text="#{msg.problems.name}"></label>
+                    <div class="col-sm-10">
+                        <input th:field="*{problem.name}" class="form-control mb-3" type="text"
+                               th:placeholder="#{msg.problems.name}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" th:text="#{msg.problems.points}"></label>
+                    <div class="col-sm-10">
+                        <input th:field="*{problem.points}" class="form-control mb-3" type="text"
+                               th:placeholder="#{msg.problems.points}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" th:text="#{msg.problems.compilator}"></label>
+                    <div class="col-sm-10">
+                        <input th:field="*{problem.compilation}" class="form-control mb-3" type="text"
+                               th:placeholder="#{msg.problems.compilator}"/>
+                    </div>
+                </div>
+                <div class="form-group markdown">
+                    <label th:text="#{msg.problems.description}"></label>
+                    <textarea th:field="*{problem.description}" id="description"></textarea>
+                </div>
+            </div>
+            <!--/* --------------------------------------------- */-->
+            <!--/* ----------------- SOLUTION ------------------ */-->
+            <div class="tab-pane fade" id="solution" role="tabpanel" aria-labelledby="task-tab">
+                <h2 th:text="#{msg.problems.reference}"></h2>
+                <div class="row mt-3">
+                    <div class="col-sm-4">
+                        Je zapotřebí přidat referenční řešení:
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="file" class="form-control-file" name="file" id="file">
+                    </div>
+                    <div class="col-sm-12 mt-3">
+                        <textarea th:field="*{solution.content}" id="content-target"></textarea>
+                    </div>
+                </div>
+            </div>
+            <!--/* --------------------------------------------- */-->
+            <!--/* ------------------ TESTS -------------------- */-->
+            <div class="tab-pane fade" id="test" role="tabpanel" aria-labelledby="task-tab">
+                <h2 th:text="#{msg.problems.tests}"></h2>
+                <div id="resultBlock">
+                    Počet testů: 0
+                </div>
+                <button id="addTest" class="btn btn-secondary btn-block btn-sm"
+                        th:text="#{msg.problems.add.test}"></button>
+                <hr/>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" th:text="${editing != null} ? #{msg.problems.edit} : #{msg.problems.add}"></button>
+
+    </form>
+</div>
+
+
+<th:block layout:fragment="snippetJs">
+    <script th:src="@{/js/simplemde/simplemde.min.js}"></script>
+    <script th:src="@{/plugins/codemirror-5.42.2/lib/codemirror.js}"></script>
+    <script th:src="@{/plugins/codemirror-5.42.2/mode/clike/clike.js}"></script>
+    <script th:src="@{/plugins/codemirror-5.42.2/mode/shell/shell.js}"></script>
+    <script th:src="@{/plugins/sortable-0.9.13/jquery-sortable.js}"></script>
+    <script th:src="@{/js/file_upload.js}"></script>
+    <script th:inline="javascript">
+        var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("content-target"), {
+            mode: "text/x-csrc",
+            matchBrackets: true,
+            lineNumbers: true,
+            lineWrapping: false,
+            fixedGutter: false
+        });
+        new SimpleMDE({
+            element: document.getElementById("description"),
+            forceSync: true,
+            spellChecker: false,
+            showIcons: ["code", "table"],
+            status: false,
+        })
+        $(document).ready(function () {
+            var url = /*[[@{/admin/problems/rendertests/}]]*/""
+            var tests = $('#tests').children('.row').children()
+
+            $.ajax({
+                url: url, type: 'GET',
+                success: function (data) {
+                    var tests = $('#tests').children('.row').children()
+                    $("#resultBlock").html(data)
+                    loadTestElements()
+                }
+            })
+            $('#solution-tab').on('shown.bs.tab', function () {
+                myCodeMirror.refresh()
+            })
+            $('#test-tab').on('shown.bs.tab', function () {
+                $('.CodeMirror').each(function (i, el) {
+                    el.CodeMirror.refresh()
+                })
+            })
+        })
+
+
+        $('#addTest').click(function () {
+            var tests = $('#tests').children('.row').children()
+            var collapsed = []
+            //------------------------------
+            tests.each(function () {
+                collapsed.push($(this).find('.card-test').hasClass('collapsed'))
+            })
+            var url = /*[[@{/admin/problems/addtest/}]]*/
+                ajaxCall(url, collapsed)
+            return false;
+        })
+
+        function ajaxCall(url, collapsed) {
+            $.ajax({
+                url: url, type: 'POST', data: $("#form").serialize(),
+                success: function (data) {
+                    var tests = $('#tests').children('.row').children()
+                    $("#resultBlock").html(data)
+                    loadTestElements()
+                    tests.each(function (i) {
+                        if (collapsed[i] === true) {
+                            var tmp = $('#test' + i)
+                            tmp.toggleClass('show').prev().toggleClass('collapsed')
+                            var name = tmp.find('.nametest').val()
+                            tmp.prev().find('.additional-info').text('- ' + (name.length <= 0 ? 'Test bez jména' : name))
+                        }
+                    })
+                }
+            })
+        }
+
+        function loadTestElements() {
+            $('.removeTest').click(function () {
+
+                var id = $(this).parent().attr('data-id')
+                var tests = $('#tests').children('.row').children()
+                var collapsed = []
+                //------------------------------
+                tests.each(function () {
+                    var tmp = $(this).find('.card-body').attr('data-id')
+                    if (tmp == id) return true;
+                    collapsed.push($(this).find('.card-test').hasClass('collapsed'))
+                })
+                //------------------------------
+                var url = /*[[@{/admin/problems/removetest/}]]*/""
+                ajaxCall(url + id, collapsed)
+
+                return false;
+            })
+
+            $(".file").each(function () {
+                var txt = $(this)[0]
+                var cm = CodeMirror.fromTextArea(txt, {
+                    mode: "shell",
+                    lineNumbers: true,
+                    lineWrapping: false,
+                    fixedGutter: false
+                });
+                cm.setSize(null, cm.defaultTextHeight() + 100)
+                cm.on("change", function () {
+                    txt.value = cm.getValue()
+                })
+                //-------------------------------------------------------------------- HANDLE CLICKING GENERATE
+                $(this).parents(".row").find('.run-test').click(function () {
+                    var url = /*[[@{/admin/problems/run/generator/}]]*/""
+                    var id = $(this).attr('data-id')
+                    var outID = $("div#testCases" + id + "output > p")
+                    var str = $(this).parent().prev().find(".CodeMirror")[0].CodeMirror
+
+                    var btn = $(this)
+                    if (str.getValue().length <= 0) {
+                        outID.text("Error: the code is empty.")
+                        return;
+                    }
+                    btn.attr('disabled', true)
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {source_code: str.getValue()},
+                        success: function (data) {
+                            if (data.stderr !== null) {
+                                outID.text(data.stderr)
+                            } else outID.text(data.stdout)
+                            btn.attr('disabled', false)
+                        },
+                        timeout: 10000,
+                        error: function (data) {
+                            outID.text("Cannot connect to the server. Please contact an admin.<br />")
+                            btn.attr('disabled', false)
+                        }
+                    })
+                })
+            })
+
+            $('.collapse').on('hidden.bs.collapse', function () {
+                var name = $(this).find('.nametest').val()
+                $(this).prev().find('.additional-info').text('- ' + (name.length <= 0 ? 'Test bez jména' : name))
+            }).on('show.bs.collapse', function () {
+                $(this).prev().find('.additional-info').text('')
+            })
+
+            $(".custom-checkbox").change(function () {
+                var parent = $(this).closest('.row')
+                parent.children('.col-of-data').toggleClass('col-sm-10').toggleClass('col-sm-6')
+                parent.children('.col-of-output').toggleClass('d-none')
+            })
+
+            $(".custom-checkbox").each(function(){
+                var val = $(this).children('input[type="checkbox"]').is(":checked")
+                var parent = $(this).closest('.row')
+                if(val == true){
+                    parent.children('.col-of-data').toggleClass('col-sm-10').toggleClass('col-sm-6')
+                    parent.children('.col-of-output').toggleClass('d-none')
+                }
+            })
+
+            $(".test-panel").sortable({
+                placeholder: '<div class="placeholder col-sm-12"></div>',
+                containerSelector: 'div.test-panel',
+                itemSelector: 'div.test-drag',
+                handle: 'div.card-header',
+                delay: 100,
+                onDrop: function ($item, container, _super, event) {
+                    $item.removeClass(container.group.options.draggedClass).removeAttr("style")
+                    $("body").removeClass(container.group.options.bodyClass)
+                    $('.test-panel').children().each(function (idx) {
+                        $(this).find("[name^=testCases]").each(function (i) {
+                            $(this).attr('name', $(this).attr('name').replace(/\[.\]/, '[' + idx + ']'));
+                        })
+
+                        $(this).find("[id^=testCases]").each(function (i) {
+                            $(this).attr('id', $(this).attr('id').replace(/testCases./, 'testCases' + idx));
+                        })
+                        $(this).find("[data-id]").each(function (i) {
+                            $(this).attr('data-id', idx)
+                        })
+                    })
+                }
+
+            });
+        }
+
+
+    </script>
+</th:block>
+
+
+</html>

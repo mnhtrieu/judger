@@ -1,0 +1,119 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<div th:fragment="submissions" id="submissions">
+    <div class="row">
+        <div class="col-sm-12 mb-2" th:each="s, it: ${submissions}">
+            <div class="card submission">
+                <div class="card-header" th:classappend="${'bg-submission-state-' + s.state}">
+                    <div class="container px-0">
+                        <div class="row">
+                            <div class="col-sm-1" th:text="${'#' + (submissions.size() - it.index)}"></div>
+                            <div class="col-sm-3" th:text="${#dates.format(s.creation, 'dd.MM.YYYY HH:mm:ss')}"></div>
+                            <div class="col-sm-3 p-0" th:text="${'Splněno: ' + s.correctTests + ' z ' + s.problem.testCount + ' testů'}"></div>
+                            <div class="col text-right" th:if="${s.state == 0}">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <div th:if="${s.state != 0}" class="col text-right">
+                                <span class="tooltip-el text-dark" th:data-target="${'#body' + it.index}"
+                                      th:title="#{msg.show.tests}" data-toggle="collapse" data-placement="top">
+                                    <i class="far fa-file-alt"></i>
+                                </span>
+
+                                <span class="tooltip-el text-dark" th:data-target="${'#code' + s.id}"
+                                      th:title="#{msg.show.code}" data-toggle="collapse" data-placement="top">
+                                    <i class="fas fa-code"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapse" th:id="${'code' + s.id}">
+                    <div class="card-body">
+                        <div class="container mt-2">
+                            <pre th:id="${'code-snippet-' + s.id}" data-clipboard-snippet class="source-pre small" readonly th:text="${subCode[__${it.index}__]}"></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapse" th:id="${'body' + it.index}">
+                    <div class="card-body">
+                        <div class="card" th:each="t, it: ${s.testInputs}">
+                            <div class="card-body">
+                                <div class="container">
+
+                                    <div class="row">
+                                        <div class="col-sm-1 text-center px-0">
+                                            <i class="fas" th:classappend="${t.error != null ? 'fa-exclamation text-danger' : 'fa-check text-success'}"></i>
+                                        </div>
+                                        <div class="col-auto">
+                                            <strong
+                                                    th:text="${'#' + (s.testInputs.size()-it.index) + ': ' + (t.error != null ? t.error : 'Accepted')}"></strong>
+                                        </div>
+                                        <div class="col-auto px-0">
+                                    <span data-trigger="hover" th:data-title="#{msg.problems.tests.description}" data-toggle="popover" data-placement="top" th:data-content="${t.testCase.description}"
+                                          class="desc-link" th:text="${t.testCase.name}"></span>
+                                        </div>
+                                        <div class="col-auto px-0">
+                                            <span class="ml-4" th:text="${'Doba běhu: ' + t.time + 's'}"></span>
+                                        </div>
+
+
+                                        <div class="col text-right">
+                                            <div th:if="${t.error}" th:remove="tag">
+                                                <span th:if="${!t.hint}" th:data-id="${t.id}" class="reveal-hint text-dark"
+                                                      th:title="#{msg.reveal.hint}" data-toggle="tooltip" data-placement="top">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
+                                                    <span th:if="${t.hint}" th:data-id="${t.id}" class="tooltip-el text-dark"
+                                                          th:title="#{msg.show.hint}" data-toggle="collapse" th:data-target="${'#hint' + t.id}" data-placement="top">
+                                                    <i class="fas fa-unlock"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="container mt-2 collapse" th:if="${t.hint}" th:id="${'hint' + t.id}">
+                                            <div class="hint col-12 bg-light px-3 py-2">
+                                                <div th:if="${t.compileOutput != 'null'}">
+                                                    <strong>Compilation output:</strong> <pre th:text="${t.compileOutput}"></pre>
+                                                </div>
+                                                <div th:remove="tag" th:if="${t.error != 'Compilation Error'}">
+                                                    <div th:remove="tag" th:if="${t.stdin != 'null'}">
+                                                        <strong>Input:</strong> <pre th:text="${t.stdin}"></pre>
+                                                    </div>
+                                                    <div th:remove="tag" th:if="${t.stdout != 'null'}">
+                                                        <strong>Output:</strong> <pre th:text="${t.stdout}"></pre>
+                                                    </div>
+                                                    <div th:remove="tag" th:if="${t.refOut != 'null'}">
+                                                        <strong>Reference output:</strong> <pre th:text="${t.refOut}"></pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="revealHint" tabindex="-1" role="dialog" aria-labelledby="revealHintTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="revealHintTitle" th:text="#{msg.reveal.hint}"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p th:text="#{msg.reveal.hint.question}"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{msg.modal.close}"></button>
+                    <button id="reveal" type="button" class="btn btn-primary" th:text="#{msg.reveal.hint}"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

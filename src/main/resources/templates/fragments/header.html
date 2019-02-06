@@ -1,0 +1,72 @@
+<nav th:fragment="header" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" xmlns:th="http://www.thymeleaf.org">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">FITJudge</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/}">Home</a>
+                </li>
+                <li class="nav-item" th:classappend="${#httpServletRequest.getRequestURI() == '/problems/' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/problems/}">Problems</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Leaderboard</a>
+                </li>
+            </ul>
+
+            <div th:if="${currentUser == null}" class="nav-item dropdown">
+
+                <a class="nav-link dropdown-toggle nav-login" href="#" id="loginNavbar"
+                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                   data-offset="10,20" th:text="#{msg.login.form.submit}">
+
+                </a>
+                <div class="dropdown-menu dropdown-menu-right login">
+                    <form th:action="@{/login}" method="post" class="px-4 py-3">
+                        <div class="form-group">
+                            <input type="email" name="email" class="form-control" id="email" th:placeholder="#{msg.register.form.email}">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="password" class="form-control" id="password" th:placeholder="#{msg.register.form.password}">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" th:text="#{msg.login.form.submit}"></button>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="dropdownCheck">
+                            <label class="form-check-label" for="dropdownCheck" th:text="#{msg.login.form.remember}">
+
+                            </label>
+                        </div>
+                    </form>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" th:href="@{/registration}" th:text="#{msg.login.register.button}"></a>
+                </div>
+            </div>
+
+            <div th:if="${currentUser}" class="nav-item dropdown">
+
+                <a class="nav-link dropdown-toggle nav-login" href="#" id="loggedNavbar"
+                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                   data-offset="10,20" th:text="${currentUser.getEmail()}">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right login">
+                    <h6 class="dropdown-header">Admin Panel</h6>
+                    <a class="dropdown-item" th:href="@{/admin/problems}" th:text="#{msg.problems.task}"></a>
+                    <a class="dropdown-item" href="#" th:text="#{msg.logged.menu.admin.stats}"></a>
+                    <a class="dropdown-item" href="#" th:text="#{msg.logged.menu.admin.users}"></a>
+                    <div class="dropdown-divider"></div>
+                    <h6 class="dropdown-header" th:text="#{msg.logged.menu.user.header}"></h6>
+                    <a class="dropdown-item" href="#" th:text="#{msg.logged.menu.user.submits}"></a>
+                    <a class="dropdown-item" href="#" th:text="#{msg.logged.menu.user.profile}"></a>
+                    <a class="dropdown-item" href="#" th:text="#{msg.logged.menu.user.settings}"></a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" th:href="@{/logout/}" th:text="#{msg.logged.menu.user.logout}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

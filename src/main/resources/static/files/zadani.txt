@@ -1,0 +1,80 @@
+Úkolem je vytvořit program, který bude zaúčtovávat obchody na burze. Na začátku budeš mít nějaké akcie a ty jsou v rozmezí `maxID`.
+
+Po zadání tohoto čísla budou následovat požadavky a ty můžou být buď:
+
+* `+ id price`, tedy nákup, kde `id` identifikuje akcii a `price` udává požadovanou cenu za akcii. To jenom uloží do databáze. V jednom momentu můžou existovat více akcie za různé ceny.
+* `- id price` kde `id` je zase identifikace akcie a `price` udává **maximální** cenu, za kterou jsme ochotni akcii koupit. Pokud je k dispozici, tak se akcie zruší (koupí) a zobrazí informaci o prodeji, ceně a akcii už nelze v systému nakupovat. Pokud je k dispozici více akcií zadaného druhu s různými cenami, je přednostně prodávaná ta nejlevnější. Pokud při požadavku na nákup nejsou k dispozici akcie nebo jsou ceny jenn vyšší, zobrazí se `Není k dispozici.`
+
+Vypište a ukončujte program pokud: 
+* hodnota `maxID` není celé číslo, je záporná nebo nulová.
+* požadavek na nákup/prodej nezačíná znakem `-` nebo `+`.
+*  `id` nebo `price ` není číslo.
+*  `id ` akcie požadavku je mimo  `maxID`.
+* cena požadavku je nulová nebo záporná.
+
+## Vstup
+Na začátku dostaneš číslo `maxID` a za ním následují požadavky na prodej nebo nákup akcií. Akcie jsou v rozmezí 0 až `maxID` **včetně**.
+Požadavky končí EOF.
+
+## Výstup
+Program vypíše to co je výše zmíněno. Buď úspěch a vypíše se prodejní cena nebo informace o neúspěchu (akcie neexistuje nebo jen za vyšší ceny).
+
+### Příklady
+
+```
+Nejvyssi ID:
+10
+Nabidka a poptavka:
+- 3 100
+Neni k dispozici.
++ 3 100
++ 3 200
++ 3 50
++ 3 70
++ 5 1
++ 5 1000000000
+- 7 1
+Neni k dispozici.
+- 3 10
+Neni k dispozici.
+- 3 60
+Prodano za 50
+- 3 100
+Prodano za 70
+- 3 100
+Prodano za 100
+- 3 199
+Neni k dispozici.
+- 3 1000
+Prodano za 200
++ 5 1
++ 5 1
++ 5 1
+- 5 10
+Prodano za 1
+- 5 7
+Prodano za 1
+```
+
+```
+Nejvyssi ID:
+10
+Nabidka a poptavka:
++ 3 100
++ 11 20
+Nespravny vstup.
+```
+
+```
+Nejvyssi ID:
+10
+Nabidka a poptavka:
+* 30 120
+Nespravny vstup.
+```
+
+```
+Nejvyssi ID:
+hello
+Nespravny vstup.
+```

@@ -1,0 +1,13 @@
+REPLACE INTO `role` VALUES (1,'ADMIN');
+REPLACE INTO `role` VALUES (2,'USER');
+
+
+/* Remove data */
+INSERT INTO `document` VALUES (1,'2018-12-29 16:45:46','uploads\\1.solution.c'),(2,'2018-12-29 16:45:46','uploads\\1.1.test'),(5,'2018-12-29 18:03:56','uploads\\1.2.test'),(6,'2018-12-30 11:58:49','uploads\\2.solution.c'),(7,'2018-12-30 11:58:49','uploads\\2.1.test'),(8,'2018-12-30 11:58:49','uploads\\2.2.test');
+
+INSERT INTO `problem` VALUES (1,'\g++ -Wall -pedantic','2018-12-29 16:45:46','Na standardní výstup vypište `Hello, World!`','Hello, World program',1,1,1),(2,'g++ -Wall -pedantic','2018-12-30 11:58:49','Úkolem je vytvořit program, který bude zobrazovat vybrané citáty.\r\n\r\n### Vstup\r\nVstupem programu je jedno celé číslo. Toto číslo je z rozsahu 1 až 5 a určuje citát, který má být zobrazen.\r\n\r\n### Výstup\r\n\r\nNa začátku před očekáváním vstupu vypište `ml\' nob:`. Výstupem programu je citát odpovídající zadanému číslu na vstupu. Citáty odpovídající jednotlivým číslům jsou uvedené níže.\r\n\r\n```\r\nQapla\'\r\nnoH QapmeH wo\' Qaw\'lu\'chugh yay chavbe\'lu\' \'ej wo\' choqmeH may\' DoHlu\'chugh lujbe\'lu\'.\r\n\r\nQapla\'\r\nQu\' buSHa\'chugh SuvwI\', batlhHa\' vangchugh, qoj matlhHa\'chugh, pagh ghaH SuvwI\'\'e\'.\r\n\r\nQapla\'\r\nqaStaHvIS wa\' ram loS SaD Hugh SIjlaH qetbogh loD.\r\n\r\nQapla\'\r\nHa\'DIbaH DaSop \'e\' DaHechbe\'chugh yIHoHQo\'.\r\n\r\nQapla\'\r\nleghlaHchu\'be\'chugh mIn lo\'laHbe\' taj jej.\r\n```\r\n\r\nPokud je vstup neplatný, program to musí detekovat a zobrazit `luj`. Chybové hlášení zobrazujte na standardní výstup (ne na chybový výstup). Za chybu považujte:\r\n\r\n* vstup není celé číslo,\r\n* na vstupu je celé číslo mimo interval 1 až 5.\r\n\r\n### Příklady\r\n```\r\nml\' nob:\r\n1\r\nQapla\'\r\nnoH QapmeH wo\' Qaw\'lu\'chugh yay chavbe\'lu\' \'ej wo\' choqmeH may\' DoHlu\'chugh lujbe\'lu\'.\r\n```\r\n```\r\nml\' nob:\r\n0\r\nluj\r\n```\r\n','Citáty',1,6,1);
+INSERT INTO `problem_test_cases` VALUES (1,1),(1,2),(2,3),(2,4);
+INSERT INTO `test_case` VALUES (1,'Základní test. Kontroluje výstup jestli je shodný s referenčním řešením.',0,128000,'Základní test',5,1,2),(2,'Základní test. Kontroluje výstup jestli je shodný s referenčním řešením při random vstupu',1,128,'Generovaná data',5,1,5),(3,'Kontroluje správnost programu, zda vypíše daný citát.',1,128,'Základní test',5,1,7),(4,'Kontroluje zda program umí podchytit nesprávné vstupy a vypsat chybové hlášení.',1,128,'Test nesprávných vstupů',5,1,8);
+
+INSERT into user VALUES (1, 1, 'mnhtrieu@gmail.com','Minh','Trieu','$2a$10$yXcldlgVEtUkgeq/BE8F5.2.xE9ve164DLiW/ofcaWL32rVvRQnwe','mnhtrieu');
+INSERT into user_roles VALUES (1,1);

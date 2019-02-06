@@ -1,0 +1,55 @@
+<html layout:decorate="~{layouts/default}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title th:text="#{msg.login.title}"></title>
+</head>
+<div class="container content" layout:fragment="content">
+    <div class="col-sm-5 login-box">
+        <div th:if="${param.error}" class="col-sm-12 alert alert-warning alert-dismissible fade show"
+             role="alert">
+            <strong th:text="#{msg.login.error}"></strong> <span th:text="#{msg.login.error.msg}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div th:if="${formmessage}" class="col-sm-12 alert alert-dismissible fade show"
+             th:classappend="${formmessagetype}" role="alert">
+            <span th:text="${formmessage}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="card">
+            <h5 class="card-header" th:text="#{msg.login.title}"></h5>
+            <div class="card-body">
+                <form th:action="@{/login}" method="post">
+                    <div class="form-group row">
+                        <label for="email2" class="col-sm-3 col-form-label" th:text="#{msg.register.form.email}"></label>
+                        <div class="col-sm-9">
+                            <input type="email" name="email" class="form-control" id="email2"
+                                   th:placeholder="#{msg.register.form.email}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="password2" class="col-sm-3 col-form-label"
+                               th:text="#{msg.register.form.password}"></label>
+                        <div class="col-sm-9">
+                            <input type="password" name="password" class="form-control" id="password2"
+                                   th:placeholder="#{msg.register.form.password}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <button type="submit" class="btn btn-primary" th:text="#{msg.login.form.submit}"></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</html>

@@ -1,0 +1,38 @@
+<html layout:decorate="~{layouts/default}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title th:text="#{msg.problems.task}"></title>
+</head>
+
+<div class="container content" layout:fragment="content">
+    <h1 th:text="#{msg.problems.task}"></h1>
+    <div th:if="${msg}" class="col-sm-12 alert alert-dismissible fade show"
+         th:classappend="${msgtype}" role="alert">
+        <span th:text="${msg}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <table class="table table-bordered table-sm">
+        <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th th:text="#{msg.problems.name}"></th>
+            <th th:text="#{msg.problems.points}"></th>
+            <th th:text="#{msg.table.actions}"></th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr th:each="problem: ${problems}">
+                <td th:text="${'#' + problem.getId()}"></td>
+                <td><a th:href="@{'/problems/' + ${problem.id}}" th:text="${problem.name}"></a></td>
+                <td th:text="${problem.points}"></td>
+                <td><a th:href="@{'/problems/' + ${problem.id}}"><i class="fas fa-search"></i></a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</html>

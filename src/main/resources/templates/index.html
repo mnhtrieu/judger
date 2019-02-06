@@ -1,0 +1,28 @@
+<html layout:decorate="~{layouts/default}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+    <head>
+        <title>Main Page</title>
+    </head>
+    <div class="container content" layout:fragment="content">
+        <div th:if="${msg}" class="col-sm-12 alert alert-dismissible fade show"
+             th:classappend="${msgtype}" role="alert">
+            <span th:text="${msg}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <h1 th:text="#{msg.hello}"></h1>
+        <p>
+            Vítejte na <b>FITjudge <span class="text-danger">BETA</span></b>. Jedná se o vyhodnovací systém vytvořený k otestování znalostí
+            uživatelů v programovacím jazyce C/C++. Pro používání těchto stránek je zapotřebí se nejdříve přihlásit
+        </p>
+        <p>
+            Zároveň byl projekt vytvořen za účelem se naučit <b>Spring Boot</b> a prohloubit se do světa Java EE. Pokud jste objevili chybu,
+            budu rád když ji nahlásíte.
+        </p>
+        <p class="text-center mt-sm-5">
+            <img th:src="@{/images/index.jpg}" />
+        </p>
+    </div>
+
+</html>

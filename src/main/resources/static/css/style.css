@@ -1,0 +1,165 @@
+.content{
+    margin-top: 70px;
+}
+
+.form-check{
+    margin-top: 10px;
+}
+.login{
+    min-width: 250px;
+}
+.nav-login, nav-login:focus{
+    color: rgba(255,255,255,.5);
+}
+
+.nav-login:hover{
+    color: rgba(255,255,255,.75);
+}
+.login-box{
+    float: none;
+    margin: 0 auto;
+    clear: both;
+}
+label.file-upload{
+    position:relative;
+    overflow:hidden;
+}
+label.file-upload input[type=file]{
+    position:absolute;
+    top:0;
+    right:0;
+    min-width:100%;
+    min-height:100%;
+    font-size:100px;
+    text-align:right;
+    filter:alpha(opacity=0);
+    opacity:0;
+    outline:0;
+    background:#fff;
+    cursor:inherit;
+    display:block;
+}
+
+pre{
+    background: #f9f9f9;
+    border: 1px solid rgba(0,0,0,.15);
+    padding-top: 15px;
+    padding-left: 15px;
+    padding-bottom: 15px;
+}
+
+pre > code{
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+code{
+    background: #f9f9f9;
+    border: 1px solid rgba(0,0,0,0.15);
+    padding: 3px;
+}
+
+.card-paddingless{
+    padding: 0 !important;
+    padding-left: 3px !important;
+}
+.card-test:hover{
+    cursor: pointer;
+}
+
+.detail-task{
+    min-height: 300px;
+}
+
+
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 10000;
+}
+
+div.placeholder {
+    position: relative;
+    height: 50px;
+}
+div.placeholder:before {
+    position: absolute;
+}
+.bg-submission-state-2{
+    background-color: rgba(0, 192, 0, 0.8) !important;
+}
+
+.bg-submission-state-0{
+    background-color: #ddd !important;
+}
+
+.bg-submission-state-1{
+    background-color: rgba(235, 66, 60, 0.8) !important;
+}
+
+.card.submission > .card-header {
+
+    padding: 4px 6px !important;
+    border-radius: 0px !important;
+}
+
+.card.submission{
+    border-radius: 0px;
+}
+.card.submission .card-header > .container > .row > div {
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+}
+
+.btn-show{
+    background-color: #aaa !important;
+    border: 1px solid #6e6e6e;
+}
+
+.btn-show:disabled{
+    color: black;
+}
+
+.card.submission > div > .card-body{
+    padding: 3px;
+}
+
+.card.submission .card-body .card{
+    border-radius: 0px !important;
+}
+
+.card.submission > div > .card-body .card-body{
+    padding: 10px;
+}
+.tests tr{
+    background-color: #eee;
+}
+
+.tests .desc-link{
+    color: #007bff!important;
+    text-decoration: underline;
+}
+
+.tests .desc-link:hover{
+    text-decoration: none;
+}
+
+.tests td{
+    padding: .5rem;
+}
+.reveal-hint:hover{
+    cursor: pointer;
+}
+.hint pre{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #eee;
+    max-height:300px;
+}
+.source-pre{
+    max-height: 300px;
+}
+.tooltip-el:hover{
+    cursor: pointer;
+}

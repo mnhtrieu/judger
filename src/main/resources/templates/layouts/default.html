@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">FITJudge</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="../static/css/bootstrap/bootstrap.min.css" th:href="@{/css/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/plugins/fontawesome-5.6.3/css/all.css}" />
+    <th:block layout:fragment="snippetCss"></th:block>
+</head>
+<body>
+<div class="container mb-5">
+    <div th:replace="/fragments/header::header"></div>
+    <div layout:fragment="content"></div>
+    <!--<div th:replace="fragments/footer :: footer"></div>-->
+    <script type="application/javascript" th:src="@{/js/jquery/jquery-3.3.1.min.js}" src="../static/js/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script type="application/javascript" th:src="@{/js/bootstrap/bootstrap.bundle.min.js}" src="../static/js/bootstrap/bootstrap.bundle.min.js"></script>
+    <th:block layout:fragment="snippetJs"></th:block>
+</div>
+</body>
+</html>

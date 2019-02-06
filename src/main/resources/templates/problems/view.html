@@ -1,0 +1,187 @@
+<html layout:decorate="~{layouts/default}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title th:text="#{msg.problems.task.singular}"></title>
+</head>
+<th:block layout:fragment="snippetCss">
+    <link rel="stylesheet" th:href="@{/plugins/codemirror-5.42.2/lib/codemirror.css}"/>
+</th:block>
+<div class="container content" layout:fragment="content">
+    <h2 th:text="${'Zadání úlohy: ' + problem.name}"></h2>
+    <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"
+               th:text="#{msg.problems.description}"></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="submissions-tab" data-toggle="tab" href="#submissions" role="tab" aria-controls="submissions"
+               aria-selected="false" th:text="#{msg.problems.submissions}"></a>
+        </li>
+    </ul>
+    <div class="row">
+        <div class="col-sm-8 border-right detail-task">
+            <div class="tab-content" id="myTabContent">
+                <!---------------- TASK -------------------->
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h2 th:text="#{msg.problems.description}"></h2>
+                    <p id="description" th:text="${problem.description}"></p>
+                </div>
+                <!---------------- SUBMISSIONS ------------------>
+                <div class="tab-pane fade" id="submissions" role="tabpanel" aria-labelledby="submissions-tab">
+                    <h4 th:text="#{msg.problems.solution}"></h4>
+                    <div th:if="${currentUser}">
+                        <textarea id="content-target"></textarea>
+                        <div class="row mb-5">
+                            <div class="col-sm-12">
+
+                                <div class="mt-2">
+                                    <span th:text="#{msg.or}"></span> <input type="file" id="file"/>
+                                    <div class="float-right"><button id="send" type="button" class="btn btn-primary btn-sm">Odeslat</button></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <h4 th:text="#{msg.problems.submissions}" class="mb-3"></h4>
+                        <div id="results">
+
+                        </div>
+                    </div>
+                    <div th:if="${currentUser == null}">
+                        <p th:text="#{msg.must.log.in}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!----------------- BASIC INFO ------------------>
+        <div class="col-sm-4">
+            <h4 th:text="#{msg.problems.basicinfo}"></h4>
+            <div class="table-responsive">
+                <table class="table table-borderless table-sm">
+                    <tr>
+                        <th scope="row" th:text="#{msg.problems.date}"></td>
+                        <td th:text="${#dates.format(problem.creation, 'dd. MM. YYYY, HH:mm:ss' )}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row" th:text="#{msg.problems.points}"></td>
+                        <td th:text="${problem.points}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row" th:text="#{msg.problems.compilator}"></td>
+                        <td><code th:text="${problem.compilation}"></code></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="snippetJs">
+    <script th:src="@{/plugins/showdown-1.0.1/js/showdown.min.js}"></script>
+    <script th:src="@{/plugins/codemirror-5.42.2/lib/codemirror.js}"></script>
+    <script th:src="@{/plugins/codemirror-5.42.2/mode/clike/clike.js}"></script>
+    <script th:if="${currentUser}" th:src="@{/js/file_upload.js}"></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var target =  $('#description'),
+                text = target.text()
+
+            target.html(new showdown.Converter().makeHtml(text))
+
+
+            var hash = window.location.hash;
+            hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+            $('.nav-tabs a').click(function (e) {
+                $(this).tab('show');
+                var scrollmem = $('body').scrollTop() || $('html').scrollTop();
+                window.location.hash = this.hash;
+                $('html,body').scrollTop(scrollmem);
+            });
+        })
+    </script>
+
+    <script th:if="${currentUser}" th:inline="javascript">
+
+        var myCodeMirror = CodeMirror.fromTextArea($("#content-target")[0],{
+            mode: "text/x-csrc",
+            matchBrackets: true,
+            lineNumbers: true,
+            lineWrapping: false,
+            fixedGutter: false
+        })
+
+        $('#submissions-tab').on('shown.bs.tab', function () {
+            myCodeMirror.refresh()
+        })
+
+        $("#send").click(function(){
+            var url = /*[[@{/problems/__${problem.id}__/submissions/submit/}]]*/""
+            var interval = setInterval(fetchSubmissions, 1000)
+            setTimeout(fetchSubmissions,500)
+            var btn = $(this)
+            btn.attr('disabled', true)
+            $.ajax({
+                url: url,
+                type: 'POST',
+
+                data: {source_code: myCodeMirror.getValue()},
+                success: function(data){
+                    btn.attr('disabled', false)
+                    clearInterval(interval)
+                }
+            })
+            return false;
+        })
+
+
+
+        $(document).ready(function(){
+            fetchSubmissions();
+        })
+
+
+        function fetchSubmissions(){
+            var url = /*[[@{/problems/__${problem.id}__/submissions/fetch/}]]*/""
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $("#results").html(data)
+                    $('[data-toggle="popover"]').popover()
+                    $('[data-toggle="tooltip"]').tooltip()
+                    $('.tooltip-el').tooltip()
+                    $('.reveal-hint').click(function(){
+                        var btn = $(this)
+                        var id = btn.attr('data-id')
+                        var modal = $("#revealHint")
+                        modal.on('show.bs.modal', function(){
+                            var el = $(this).find('p')
+                            el.html(el.html().replace(/\#ID/g,'<strong>#' + id + '</strong>'))
+                        })
+                        modal.modal('toggle')
+                        modal.find('#reveal').click(function(){
+                            var u = /*[[@{/problems/__${problem.id}__/submissions/reveal/}]]*/""
+                            var btnModal = $(this)
+                            btnModal.attr('disabled',true)
+                            $.ajax({
+                                url: u + id,
+                                type: 'GET',
+                                success: function(){
+                                    btnModal.attr('disabled',false)
+                                    modal.modal('hide').on('hidden.bs.modal',fetchSubmissions)
+                                }
+
+                            })
+                        })
+                    })
+
+                }
+            })
+        }
+
+    </script>
+
+</th:block>
+
+</html>

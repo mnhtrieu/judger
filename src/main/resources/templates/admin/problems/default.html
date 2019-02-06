@@ -1,0 +1,88 @@
+<html layout:decorate="~{layouts/default}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title th:text="#{msg.problems.task}"></title>
+</head>
+<div class="container content" layout:fragment="content">
+    <div th:if="${msg}" class="col-sm-12 alert alert-dismissible fade show"
+         th:classappend="${msgtype}" role="alert">
+        <span th:text="${msg}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <h1 th:text="#{msg.problems.task}"></h1>
+
+    <p>
+        <a th:href="@{/admin/problems/add}" class="btn btn-primary btn-sm" th:text="#{msg.problems.create}"></a>
+    </p>
+    <table id="example" class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th th:text="#{msg.problems.name}"></th>
+                <th th:text="#{msg.problems.date}"></th>
+                <th th:text="#{msg.problems.author}"></th>
+                <th th:text="#{msg.problems.solution}"></th>
+                <th th:text="#{msg.problems.description}"></th>
+                <th class="text-center" th:text="#{msg.table.actions}"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="problem: ${problems}">
+                <td><a target="_blank" th:href="@{'/problems/'+ ${problem.id}}" th:text="${problem.name}"></a></td>
+                <td th:text="${#dates.format(problem.solution.creation, 'dd. MM. YYYY, HH:mm:ss' )}"></td>
+                <td th:text="${problem.user.username}"></td>
+                <td><a th:href="@{'/admin/problems/solution/' + ${problem.solution.path}}" target="_blank" th:text="${problem.solution.path}"></a></td>
+                <td th:text="${#strings.abbreviate(problem.description,50)}"></td>
+                <td class="text-center">
+                    <a th:href="@{'/admin/problems/edit/' + ${problem.id}}"><i class="far fa-edit"></i></a>
+                    <a href="#" data-toggle="modal"
+                       th:data-name="${problem.name}" th:data-id="${problem.id}" th:data-msg="#{msg.table.actions.delete.text}"
+                       th:data-title="#{msg.table.actions.delete.title}"
+                       th:data-irreversible="#{msg.table.operation.irreversible}" data-target="#modalDelete"> <i class="far fa-trash-alt"></i></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDeleteTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{msg.modal.close}"></button>
+                    <a href="#" class="btn btn-danger" th:text="#{msg.table.actions.delete.title}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="snippetJs">
+    <script th:inline="javascript">
+        $('#modalDelete').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var id = button.data('id')
+            var name = button.data('name')
+            var title = button.data('title')
+            var modal = $(this)
+            var deleteTxt = button.data('msg')
+            var irreversibleMsg = button.data('irreversible')
+            modal.find('.modal-title').text(title)
+            modal.find('.modal-body p').html(deleteTxt + " <strong>" + name + "</strong>? " + irreversibleMsg)
+            var url = /*[[@{/admin/problems/delete/}]]*/""
+            modal.find('.modal-footer a').attr("href",url + id)
+        })
+    </script>
+</th:block>
+</html>
